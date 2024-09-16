@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ComicController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,3 +27,5 @@ Route::get('/chi-siamo', function () {
 Route::get('/contatti', function () {
     return view('contacts');
 })->name('contacts');
+
+Route::resource('comics', ComicController::class);
