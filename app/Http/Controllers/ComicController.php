@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\Comic;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ComicController extends Controller
 {
@@ -14,7 +15,7 @@ class ComicController extends Controller
      */
     public function index()
     {
-        $comics = Comic::all();
+        $comics = Comic::orderBy('created_at', 'desc')->get();
         return view('comics.index', compact('comics'));
     }
 
@@ -29,9 +30,40 @@ class ComicController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
+    //  PER SALVARE IL NUOVO FUMETTO DAL FORM
     public function store(Request $request)
     {
-        //
+        // Converto il prezzo da stringa a formato decimale
+        $price = str_replace(',', '.', $request->input('price'));
+
+        // Validazione dei dati
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'thumb' => 'required|url',
+            'price' => 'required|numeric', // Verifica che il prezzo sia numerico
+            'series' => 'required|string|max:255',
+            'sale_date' => 'required|date',
+            'type' => 'required|string|max:255',
+        ]);
+
+        // Genero lo slug
+        $slug = Str::slug($validatedData['title'], '-');
+        // Verifico se lo slug è unico
+        while (Comic::where('slug', $slug)->exists()) {
+            $slug = Str::slug($validatedData['title'] . '-' . Str::random(5), '-');
+        }
+
+        // Aggiungo lo slug ai dati validati
+        $validatedData['price'] = $price;
+        $validatedData['slug'] = $slug;
+
+        // Creo un nuovo fumetto con i dati validati
+        Comic::create($validatedData);
+
+        // Redirect alla lista dei fumetti
+        return redirect()->route('comics.index');
     }
 
     /**
