@@ -17,8 +17,7 @@
                     <img src="{{ $comic->thumb }}"class="card-img-top" alt="{{ $comic->title }}">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ $comic->title }}</h5>
-                        <p class="card-text">{{ \Illuminate\Support\Str::limit($comic->description, 100) }}</p>
-                        <p class="card-text text-muted">{{ $comic->price }}</p>
+                        <p class="card-text text-muted">{{ $comic->price }}$</p>
                         <a href="{{ route('comics.show', $comic->id) }}" class="btn btn-primary mt-auto">Go to Details</a>
                     </div>
                 </div>
