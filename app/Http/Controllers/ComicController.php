@@ -34,32 +34,31 @@ class ComicController extends Controller
     //  PER SALVARE IL NUOVO FUMETTO DAL FORM
     public function store(Request $request)
     {
-        // Converto il prezzo da stringa a formato decimale
+        // Converti il prezzo da stringa a formato decimale
         $price = str_replace(',', '.', $request->input('price'));
 
-        // Validazione dei dati
+        // Validazione dei dati, inclusa 'sale_date'
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'thumb' => 'required|url',
-            'price' => 'required|numeric', // Verifica che il prezzo sia numerico
+            'price' => 'required|numeric',
             'series' => 'required|string|max:255',
-            'sale_date' => 'required|date',
+            'sale_date' => 'required|date', // Assicurati che 'sale_date' sia richiesto
             'type' => 'required|string|max:255',
         ]);
 
-        // Genero lo slug
+        // Generazione dello slug
         $slug = Str::slug($validatedData['title'], '-');
-        // Verifico se lo slug è unico
         while (Comic::where('slug', $slug)->exists()) {
             $slug = Str::slug($validatedData['title'] . '-' . Str::random(5), '-');
         }
 
-        // Aggiungo lo slug ai dati validati
+        // Aggiungi lo slug e il prezzo ai dati validati
         $validatedData['price'] = $price;
         $validatedData['slug'] = $slug;
 
-        // Creo un nuovo fumetto con i dati validati
+        // Crea il record del fumetto
         Comic::create($validatedData);
 
         // Redirect alla lista dei fumetti
@@ -79,7 +78,9 @@ class ComicController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $comic = Comic::Find($id);
+        // dump($comic);
+        return view('comics.edit', compact('comic'));
     }
 
     /**
@@ -87,7 +88,30 @@ class ComicController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Valida i dati in arrivo
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'thumb' => 'required|url',
+            'price' => 'required|numeric',
+            'series' => 'required|string|max:255',
+            'sale_date' => 'required|date',
+            'type' => 'required|string|max:255',
+        ]);
+
+        // Cerca il fumetto in base all'id
+        $comic = Comic::find($id);
+
+        // Se non esiste, ritorna un errore
+        if (!$comic) {
+            return redirect()->route('comics.index');
+        }
+
+        // Aggiorna i dati del fumetto
+        $comic->update($validatedData);
+
+        // Redirect alla pagina dei fumetti con un messaggio di successo
+        return redirect()->route('comics.index');
     }
 
     /**
@@ -95,6 +119,10 @@ class ComicController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $comic = Comic::find($id);
+
+        $comic->delete();
+        // passo la variabile di sessione con with che passiamo alla pagina di reindirizzo
+        return redirect()->route('comics.index')->with('deleted', 'Il Comic' . $comic->title . 'è stato eliminato correttamente');
     }
 }

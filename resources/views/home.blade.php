@@ -6,12 +6,11 @@
 @endsection
 
 @section('content')
-    <div class="container my-5">
+    <div class="container my-5 bg-dark">
         <h1>{{ $title }}</h1>
-        <img src="{{ Vite::asset('resources/img/dc.webp') }}" alt="" class="img-fluid">
-        <p>
-            {{ $text }}
-        </p>
+        <p class="text-white">Il totale dei prodotti DC COMICS e {{ $num_prodotti }}</p>
+        <p>L'ultimo elemento DC COMIC è {{ $title_last_comic }}</p>
+
     </div>
 @endsection
 
