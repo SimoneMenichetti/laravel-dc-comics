@@ -3,6 +3,7 @@
 @section('content')
     <div class="container">
         <h1>Comics List</h1>
+        {{-- condizione per messaggio elminazione comic --}}
 
         @if (session('deleted'))
             <div class="alert alert-success" role="alert">
@@ -10,6 +11,12 @@
             </div>
         @endif
 
+        {{-- condizione per messaggio creazione newcomic --}}
+        @if (session('success'))
+            <div class="alert alert-success" role="alert">
+                {{ session('success') }}
+            </div>
+        @endif
         <a href="{{ route('comics.create') }}" class="btn btn-primary mb-3">Add New Comic</a>
 
         <table class="table table-striped">

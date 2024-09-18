@@ -16,7 +16,7 @@ class Comic extends Model
         'thumb',
         'price',
         'series',
-        'sale_date' => 'date',
+        'sale_date',
         'type',
     ];
 
