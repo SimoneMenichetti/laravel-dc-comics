@@ -61,6 +61,8 @@ class ComicController extends Controller
     {
         // Ottieni i dati validati dalla ComicRequest
         $validatedData = $request->validated();
+        // memorizza i dati inseriti nel form e l ultima sessione
+        session()->put('last_comic_data', $validatedData);
 
         // Converti il prezzo da stringa a formato decimale
         $price = str_replace(',', '.', $validatedData['price']);
@@ -79,6 +81,9 @@ class ComicController extends Controller
         // Reindirizza alla lista dei fumetti con un messaggio di successo
         return redirect()->route('comics.show', $comic->id)->with('success', 'Fumetto "' . $comic->title . '" creato con successo!');
     }
+
+
+
 
     /**
      * Display the specified resource.
